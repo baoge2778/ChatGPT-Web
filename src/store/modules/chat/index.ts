@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getLocalState, setLocalState } from './helper'
+import { defaultState, getLocalState, setLocalState } from './helper'
 import { router } from '@/router'
 
 export const useChatStore = defineStore('chat-store', {
@@ -23,6 +23,11 @@ export const useChatStore = defineStore('chat-store', {
   },
 
   actions: {
+    setUsingContext(context: boolean) {
+      this.usingContext = context
+      this.recordState()
+    },
+
     addHistory(history: Chat.History, chatData: Chat.Chat[] = []) {
       this.history.unshift(history)
       this.chat.unshift({ uuid: history.uuid, data: chatData })
@@ -175,6 +180,11 @@ export const useChatStore = defineStore('chat-store', {
         this.chat[index].data = []
         this.recordState()
       }
+    },
+
+    clearHistory() {
+      this.$state = { ...defaultState() }
+      this.recordState()
     },
 
     async reloadRoute(uuid?: number) {
